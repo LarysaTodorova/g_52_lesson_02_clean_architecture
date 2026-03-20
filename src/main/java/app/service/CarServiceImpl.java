@@ -37,4 +37,20 @@ public class CarServiceImpl implements CarService {
                 .average()
                 .orElse(0.0));
     }
+
+    @Override
+    public void update(Car car) {
+        Car carForUpdate = getById(car.getId());
+        if (carForUpdate != null) {
+            carForUpdate.setPrice(car.getPrice());
+        }
+    }
+
+    @Override
+    public void delete(long id) {
+        Car carForDelete = getById(id);
+        if (carForDelete != null) {
+            carRepository.deleteById(id);
+        }
+    }
 }

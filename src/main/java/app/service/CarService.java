@@ -14,4 +14,8 @@ public interface CarService {
     Car getById(Long id);
 
     BigDecimal getCarAveragePrice();
+
+    void update(Car car);
+
+    void delete(long id);
 }
