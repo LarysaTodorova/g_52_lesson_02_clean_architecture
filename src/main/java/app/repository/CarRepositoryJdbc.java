@@ -3,10 +3,7 @@ package app.repository;
 import app.domain.Car;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,10 +60,27 @@ public class CarRepositoryJdbc implements CarRepository {
     public Car getById(Long id) {
         try (Connection connection = getConnection()) {
 
+            String query = "SELECT * FROM car WHERE id = ?";
+
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (!resultSet.next()) {
+                return null;
+            }
+
+            Long currentId = resultSet.getLong("id");
+            String brand = resultSet.getString("brand");
+            int year = resultSet.getInt("year");
+            BigDecimal price = resultSet.getBigDecimal("price");
+
+            return new Car(currentId, brand, year, price);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
