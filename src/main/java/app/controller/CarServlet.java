@@ -2,6 +2,7 @@ package app.controller;
 
 import app.domain.Car;
 import app.repository.CarRepository;
+import app.repository.CarRepositoryHibernate;
 import app.repository.CarRepositoryJdbc;
 import app.repository.CarRepositoryMap;
 import app.service.CarService;
@@ -24,7 +25,7 @@ public class CarServlet extends HttpServlet {
     private final CarService service;
 
     public CarServlet() {
-        CarRepository repository = new CarRepositoryJdbc();
+        CarRepository repository = new CarRepositoryHibernate();
         service = new CarServiceImpl(repository);
     }
 
