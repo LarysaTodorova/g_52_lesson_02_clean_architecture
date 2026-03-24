@@ -34,7 +34,7 @@ public class CarRepositoryHibernate implements CarRepository {
         try {
             // Открываем транзакцию
             transaction.begin();
-            // Сохраняем автомобиль в БД
+            // Сохраняем автомобиль в БД (метод persist служит для того, чтобы сохранить объект в базе)
             entityManager.persist(car);
             // Закрываем транзакцию
             transaction.commit();
@@ -66,7 +66,7 @@ public class CarRepositoryHibernate implements CarRepository {
         try {
             transaction.begin();
             Car foundCar = getById(car.getId());
-            foundCar.setPrice(foundCar.getPrice());
+            foundCar.setPrice(car.getPrice());
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
