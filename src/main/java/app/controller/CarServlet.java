@@ -66,15 +66,6 @@ public class CarServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-//        String brand = req.getParameter("brand");
-//        int year = Integer.parseInt(req.getParameter("year"));
-//        BigDecimal price = new BigDecimal(req.getParameter("price"));
-//
-//        Writer writer = resp.getWriter();
-//
-//        Car car = service.save(new Car(brand, year, price));
-//        mapper.writeValue(writer, car);
-
         Writer writer = resp.getWriter();
         // читаем JSON из тела HTTP-запроса и превращаем его в Java объект Car
         Car requestCar = mapper.readValue(req.getReader(), Car.class);
@@ -87,19 +78,6 @@ public class CarServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-
-//        Long id = Long.parseLong(req.getParameter("id"));
-//        String brand = req.getParameter("brand");
-//        int year = Integer.parseInt(req.getParameter("year"));
-//        BigDecimal price = new BigDecimal(req.getParameter("price"));
-//
-//        Writer writer = resp.getWriter();
-//
-//        Car car = new Car(brand, year, price);
-//        car.setId(id);
-//
-//        service.update(car);
-//        mapper.writeValue(writer, "success");
 
         // получаем поток для записи ответа клиенту
         Writer writer = resp.getWriter();
