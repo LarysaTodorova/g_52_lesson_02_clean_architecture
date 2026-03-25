@@ -41,16 +41,23 @@ public class CarServlet extends HttpServlet {
     // из объекта resp, упакует её в http-ответ и отправит обратно клиенту.
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Если в запросе будет присутствовать id, то его значение запишется в переменную.
+        // А если id не будет в запросе, то в переменную запишется null.
         String id = req.getParameter("id");
+        // получаем поток для записи тела HTTP-ответа клиенту
         Writer writer = resp.getWriter();
         resp.setContentType("application/json");
 
         if (id == null) {
+            // Здесь будем отдавать клиенту все автомобили
             List<Car> cars = service.getAll();
+            // преобразуем объекты cars в JSON и отправляем их клиенту
             mapper.writeValue(writer, cars);
         } else {
+            // Здесь будем отдавать клиенту один автомобиль, соответствующий id
             Long numericId = Long.parseLong(id);
             Car car = service.getById(numericId);
+            // преобразуем объект car в JSON и отправляем его клиенту
             mapper.writeValue(writer, car);
         }
     }
