@@ -13,6 +13,9 @@ public class CarRepositoryJdbc implements CarRepository {
 
     private Connection getConnection() {
         try {
+            // Эта строка кода подгружает необходимый драйвер БД
+            // в память работающего приложения, чтобы драйвер был
+            // доступен во время выполнения программы.
             Class.forName(DB_DRIVER_PATH);
             String dbUrl = DB_ADDRESS + DB_NAME;
             return DriverManager.getConnection(dbUrl, DB_USERNAME, DB_PASSWORD);
@@ -25,18 +28,42 @@ public class CarRepositoryJdbc implements CarRepository {
     public Car save(Car car) {
         try (Connection connection = getConnection()) {
 
+            String query = "INSERT INTO car (brand, year, price) VALUES (?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    query,
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            preparedStatement.setString(1, car.getBrand());
+            preparedStatement.setInt(2, car.getYear());
+            preparedStatement.setBigDecimal(3, car.getPrice());
+
+            preparedStatement.executeUpdate();
+
+            ResultSet keys = preparedStatement.getGeneratedKeys();
+
+            if (keys.next()) {
+                Long id = keys.getLong(1);
+                return new Car(id, car.getBrand(), car.getYear(), car.getPrice());
+            }
+
+            return null;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Override
     public List<Car> getAll() {
+        // Открываем соединение с БД
         try (Connection connection = getConnection()) {
 
+            // Создаём запрос, который собираемся отправить в БД
             String query = "SELECT * FROM car";
+            // Получаем объект, который умеет отправлять запросы в БД
             Statement statement = connection.createStatement();
+            // Отправляем запрос в БД и получаем от неё ответ
             ResultSet resultSet = statement.executeQuery(query);
 
             List<Car> cars = new ArrayList<>();
