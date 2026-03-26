@@ -114,6 +114,22 @@ public class CarRepositoryJdbc implements CarRepository {
     public void update(Car car) {
         try (Connection connection = getConnection()) {
 
+
+            String query = "UPDATE car SET brand = ?, year = ?, price = ? WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+
+            preparedStatement.setString(1, car.getBrand());
+            preparedStatement.setInt(2, car.getYear());
+            preparedStatement.setBigDecimal(3, car.getPrice());
+            preparedStatement.setLong(4, car.getId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new RuntimeException("Car not found with id = " + car.getId());
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -122,6 +138,16 @@ public class CarRepositoryJdbc implements CarRepository {
     @Override
     public void deleteById(Long id) {
         try (Connection connection = getConnection()) {
+            String query = "DELETE FROM car WHERE id = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, id);
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new RuntimeException("Car not found with id = " + id);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
