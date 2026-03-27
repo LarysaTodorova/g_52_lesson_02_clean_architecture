@@ -85,26 +85,36 @@ public class CarRepositoryJdbc implements CarRepository {
 
     @Override
     public Car getById(Long id) {
+        // Открываем соединение с БД (и автоматически закроем его после выполнения try)
         try (Connection connection = getConnection()) {
 
+            // SQL-запрос: найти машину по id
             String query = "SELECT * FROM car WHERE id = ?";
 
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setLong(1, id);
+            // Подготавливаем запрос (PreparedStatement защищает от SQL-инъекций)
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            // Подставляем значение вместо ? (первый параметр = id)
+            preparedStatement.setLong(1, id);
 
-            ResultSet resultSet = statement.executeQuery();
+            // Выполняем запрос и получаем результат (таблицу)
+            ResultSet resultSet = preparedStatement.executeQuery();
 
+            // Переходим к первой строке результата
+            // Если строки нет → значит в БД нет такой машины → возвращаем null
             if (!resultSet.next()) {
                 return null;
             }
 
+            // Читаем данные из найденной строки (из колонок таблицы)
             Long currentId = resultSet.getLong("id");
             String brand = resultSet.getString("brand");
             int year = resultSet.getInt("year");
             BigDecimal price = resultSet.getBigDecimal("price");
 
+            // Создаём объект Car из данных БД и возвращаем его
             return new Car(currentId, brand, year, price);
 
+            // Если произошла ошибка — оборачиваем её в RuntimeException
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -124,8 +134,11 @@ public class CarRepositoryJdbc implements CarRepository {
             preparedStatement.setBigDecimal(3, car.getPrice());
             preparedStatement.setLong(4, car.getId());
 
+            // Выполняем UPDATE-запрос
+            // executeUpdate() возвращает количество изменённых строк
             int affectedRows = preparedStatement.executeUpdate();
 
+            // Если ни одна строка не обновилась → значит такого id нет в БД
             if (affectedRows == 0) {
                 throw new RuntimeException("Car not found with id = " + car.getId());
             }
