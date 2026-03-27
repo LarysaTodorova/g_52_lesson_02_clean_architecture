@@ -128,7 +128,7 @@ public class CarRepositoryJdbc implements CarRepository {
             String query = "UPDATE car SET brand = ?, year = ?, price = ? WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-
+            // Подставляем значения вместо ? (по порядку)
             preparedStatement.setString(1, car.getBrand());
             preparedStatement.setInt(2, car.getYear());
             preparedStatement.setBigDecimal(3, car.getPrice());
