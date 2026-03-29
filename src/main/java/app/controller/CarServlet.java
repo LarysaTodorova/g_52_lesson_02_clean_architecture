@@ -77,8 +77,6 @@ public class CarServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-
         // читаем JSON из запроса и превращаем в объект Car
         Car requestCar = mapper.readValue(req.getReader(), Car.class);
         // обновляем автомобиль через сервис
@@ -90,6 +88,5 @@ public class CarServlet extends HttpServlet {
         String id = req.getParameter("id");
         Long numericId = Long.parseLong(id);
         service.delete(numericId);
-
     }
 }
