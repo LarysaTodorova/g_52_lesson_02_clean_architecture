@@ -25,7 +25,7 @@ public class CarServlet extends HttpServlet {
     private final CarService service;
 
     public CarServlet() {
-        CarRepository repository = new CarRepositoryHibernate();
+        CarRepository repository = new CarRepositoryMap();
         service = new CarServiceImpl(repository);
     }
 
@@ -79,25 +79,17 @@ public class CarServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-        // получаем поток для записи ответа клиенту
-        Writer writer = resp.getWriter();
         // читаем JSON из запроса и превращаем в объект Car
         Car requestCar = mapper.readValue(req.getReader(), Car.class);
         // обновляем автомобиль через сервис
         service.update(requestCar);
-        // отправляем клиенту JSON с обновлённым автомобилем
-        mapper.writeValue(writer, requestCar);
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
-        Writer writer = resp.getWriter();
-        resp.setContentType("application/json");
-
         Long numericId = Long.parseLong(id);
         service.delete(numericId);
-        mapper.writeValue(writer, "success");
-    }
 
+    }
 }
