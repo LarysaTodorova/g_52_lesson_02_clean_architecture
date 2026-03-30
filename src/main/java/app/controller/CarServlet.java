@@ -25,7 +25,7 @@ public class CarServlet extends HttpServlet {
     private final CarService service;
 
     public CarServlet() {
-        CarRepository repository = new CarRepositoryMap();
+        CarRepository repository = new CarRepositoryJdbc();
         service = new CarServiceImpl(repository);
     }
 

@@ -26,27 +26,43 @@ public class CarRepositoryJdbc implements CarRepository {
 
     @Override
     public Car save(Car car) {
+
+        // try-with-resources: автоматически закроет соединение после выполнения (даже при ошибке)
         try (Connection connection = getConnection()) {
 
+            // SQL-запрос с плейсхолдерами (?) вместо значений
             String query = "INSERT INTO car (brand, year, price) VALUES (?, ?, ?)";
+
+            // Создаем PreparedStatement:
+            // 1. передаем SQL-запрос
+            // 2. указываем, что хотим получить сгенерированный ID (PRIMARY KEY)
             PreparedStatement preparedStatement = connection.prepareStatement(
                     query,
                     Statement.RETURN_GENERATED_KEYS
             );
 
+            // Подставляем значение в первый ? (brand)
             preparedStatement.setString(1, car.getBrand());
+            // Подставляем значение во второй ? (year)
             preparedStatement.setInt(2, car.getYear());
+            // Подставляем значение в третий ? (price)
             preparedStatement.setBigDecimal(3, car.getPrice());
 
+            // Выполняем INSERT-запрос (добавление данных в БД)
             preparedStatement.executeUpdate();
 
+            // Получаем ResultSet с автоматически сгенерированными ключами (в нашем случае, ID)
             ResultSet keys = preparedStatement.getGeneratedKeys();
 
+            // Проверяем, есть ли сгенерированный ключ
             if (keys.next()) {
+                // Берем первый столбец (обычно это ID)
                 Long id = keys.getLong(1);
+                // Создаем и возвращаем новый объект Car уже с присвоенным ID
                 return new Car(id, car.getBrand(), car.getYear(), car.getPrice());
             }
 
+            // Если ключ не был сгенерирован — возвращаем null
             return null;
 
         } catch (Exception e) {
