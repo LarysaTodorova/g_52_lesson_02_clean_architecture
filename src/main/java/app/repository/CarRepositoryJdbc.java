@@ -58,8 +58,10 @@ public class CarRepositoryJdbc implements CarRepository {
             if (keys.next()) {
                 // Берем первый столбец (обычно это ID)
                 Long id = keys.getLong(1);
-                // Создаем и возвращаем новый объект Car уже с присвоенным ID
-                return new Car(id, car.getBrand(), car.getYear(), car.getPrice());
+                // Создаем новый объект Car уже с присвоенным ID
+                Car savedCar = new Car(id, car.getBrand(), car.getYear(), car.getPrice());
+                //Возвращаем savedCar
+                return savedCar;
             }
 
             // Если ключ не был сгенерирован — возвращаем null
